@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>핸든 시스템</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: #0a0a0f;
+      font-family: 'Noto Sans KR', sans-serif;
+      color: #f0f0f0;
+    }
+
+    header {
+      padding: 48px 40px 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.50);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    h1 span {
+      color: rgba(255,255,255,0.40);
+      font-weight: 300;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+      font-weight: 300;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 40px 80px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.40);
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      font-family: 'Space Grotesk', sans-serif;
+      margin-left: 12px;
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.03);
+      text-decoration: none;
+      display: block;
+      color: inherit;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      border-color: rgba(255,255,255,0.12);
+    }
+
+    .card:active {
+      transform: translateY(-1px);
+    }
+
+    .card-accent {
+      height: 3px;
+      width: 100%;
+    }
+
+    .card-body {
+      padding: 24px;
+      padding-bottom: 52px;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .card-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.50);
+      font-weight: 400;
+    }
+
+    .card-arrow {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .card:hover .card-arrow {
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 32px 20px 24px; }
+      main { padding: 28px 20px 60px; }
+      .grid { grid-template-columns: 1fr; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">Hendon System</div>
+      <h1>핸든 <span>시스템</span></h1>
+      <p class="subtitle">업무 사이트 모음 — 필요한 서비스에 빠르게 접근하세요</p>
+    </div>
+  </header>
+
+  <main>
+    <div class="section-header">
+      <div class="section-label">사이트 바로가기</div>
+      <span class="count-badge" id="count"></span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <script>
+    const sites = [
+      {
+        name: "핸든 제품 현황",
+        url: "https://crazywave3.github.io/hendon_product_status/",
+        icon: "📦",
+        description: "제품 현황 대시보드",
+        accent: "#e94560",
+      },
+      {
+        name: "주문서 변환기",
+        url: "https://crazywave3.github.io/day7_order_converter/",
+        icon: "🔄",
+        description: "주문 데이터 변환 도구",
+        accent: "#40916c",
+      },
+      {
+        name: "데이세븐 스마트스토어",
+        url: "https://crazywave3.github.io/day7_sales_summary/",
+        icon: "📊",
+        description: "판매량 대시보드",
+        accent: "#7b5ea7",
+      },
+      {
+        name: "데이세븐 홈페이지",
+        url: "https://day7.kr/",
+        icon: "🏠",
+        description: "공식 홈페이지",
+        accent: "#e8a838",
+      },
+    ];
+
+    const grid = document.getElementById("grid");
+    const count = document.getElementById("count");
+
+    count.textContent = sites.length;
+
+    sites.forEach(site => {
+      const a = document.createElement("a");
+      a.href = site.url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.className = "card";
+      a.innerHTML = `
+        <div class="card-accent" style="background:${site.accent}"></div>
+        <div class="card-body">
+          <div class="card-icon">${site.icon}</div>
+          <div class="card-name">${site.name}</div>
+          <div class="card-desc">${site.description}</div>
+        </div>
+        <div class="card-arrow">↗</div>
+      `;
+      grid.appendChild(a);
+    });
+  </script>
+</body>
+</html>
