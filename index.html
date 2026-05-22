@@ -32,16 +32,6 @@
       padding: 48px 40px 32px;
     }
 
-    .brand {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.50);
-      margin-bottom: 12px;
-    }
-
     h1 {
       font-size: clamp(28px, 5vw, 44px);
       font-weight: 700;
@@ -239,92 +229,119 @@
     <div class="grid" id="event-grid"></div>
   </main>
 
+  <!-- 개발 중 뷰 -->
+  <main id="dev-view" style="display:none;">
+    <button class="back-btn" onclick="goBack()">← 뒤로</button>
+    <div class="section-header">
+      <div class="section-label">개발 중</div>
+      <span class="count-badge" id="dev-count"></span>
+    </div>
+    <div class="grid" id="dev-grid"></div>
+  </main>
+
   <script>
+    const rainbow = ['#ff3b30', '#ff9500', '#ffcc00', '#34c759', '#007aff', '#5856d6'];
+
     const sites = [
       {
         name: "핸든 제품 현황",
-        url: "https://crazywave3.github.io/hendon_product_status/",
         icon: "📦",
         description: "제품 현황 대시보드",
-        accent: "#ff3b30",
+        url: "https://crazywave3.github.io/hendon_product_status/",
       },
       {
         name: "데이세븐 판매량 집계",
-        url: "https://crazywave3.github.io/day7_sales_summary/",
         icon: "📊",
         description: "네이버 스마트 스토어",
-        accent: "#ff9500",
+        url: "https://crazywave3.github.io/day7_sales_summary/",
       },
       {
         name: "광고 분석",
-        url: "https://crazywave3.github.io/NAVER_SHOPPING_AD_report/",
         icon: "📣",
         description: "네이버 쇼핑 광고 리포트",
-        accent: "#ffcc00",
+        url: "https://crazywave3.github.io/NAVER_SHOPPING_AD_report/",
       },
       {
         name: "주문서 변환기",
-        url: "https://crazywave3.github.io/day7_order_converter/",
         icon: "🔄",
         description: "주문 데이터 변환 도구",
-        accent: "#34c759",
+        url: "https://crazywave3.github.io/day7_order_converter/",
       },
       {
         name: "HSK 단어",
-        url: "https://crazywave3.github.io/HSK_voca/",
         icon: "📖",
         description: "열심히 하자",
-        accent: "#007aff",
-      },
-      {
-        name: "주방용품 트렌드 조사",
-        url: "https://crazywave3.github.io/Kitchenware-Trend-Research/",
-        icon: "🔍",
-        description: "개발중",
-        accent: "#636366",
-      },
-      {
-        name: "데이세븐 홈페이지",
-        url: "https://day7.kr/",
-        icon: "🏠",
-        description: "개발중",
-        accent: "#636366",
+        url: "https://crazywave3.github.io/HSK_voca/",
       },
       {
         name: "이벤트",
-        url: null,
         icon: "🎪",
         description: "행사 및 전시 바로가기",
-        accent: "#9b59b6",
         isFolder: true,
+        folderKey: "event",
+        accent: "#636366",
+      },
+      {
+        name: "개발 중",
+        icon: "🛠️",
+        description: "준비 중인 서비스",
+        isFolder: true,
+        folderKey: "dev",
+        accent: "#636366",
       },
     ];
 
     const events = [
       {
         name: "2026 서울국제식품산업대전",
-        url: "https://crazywave3.github.io/Seoulfood2026/",
         icon: "🍽️",
         description: "서울 식품 산업 전시회",
-        accent: "#9b59b6",
+        url: "https://crazywave3.github.io/Seoulfood2026/",
       },
     ];
 
-    function renderCards(data, containerId) {
+    const devSites = [
+      {
+        name: "주방용품 트렌드 조사",
+        icon: "🔍",
+        description: "개발 중",
+        url: "https://crazywave3.github.io/Kitchenware-Trend-Research/",
+      },
+      {
+        name: "데이세븐 홈페이지",
+        icon: "🏠",
+        description: "개발 중",
+        url: "https://day7.kr/",
+      },
+    ];
+
+    function renderCards(data, containerId, useRainbow) {
       const grid = document.getElementById(containerId);
       grid.innerHTML = "";
+      let ri = 0;
       data.forEach(site => {
-        const el = document.createElement(site.isFolder ? "div" : "a");
-        if (!site.isFolder) {
+        let accent;
+        if (site.accent) {
+          accent = site.accent;
+        } else if (useRainbow) {
+          accent = rainbow[ri % rainbow.length];
+          ri++;
+        } else {
+          accent = "#636366";
+        }
+
+        const el = document.createElement(site.isFolder || site.url ? (site.isFolder ? "div" : "a") : "div");
+        if (!site.isFolder && site.url) {
           el.href = site.url;
           el.target = "_blank";
           el.rel = "noopener noreferrer";
-        } else {
-          el.onclick = () => openFolder();
+        }
+        if (site.isFolder) {
+          el.onclick = () => openFolder(site.folderKey);
         }
         el.className = "card";
         el.innerHTML = `
-          <div class="card-accent" style="background:${site.accent}"></div>
+          <div class="card-accent" style="background:${accent}"></div>
           <div class="card-body">
             <div class="card-icon">${site.icon}</div>
             <div class="card-name">${site.name}</div>
@@ -336,21 +353,28 @@
       });
     }
 
-    function openFolder() {
+    function openFolder(key) {
       document.getElementById("main-view").style.display = "none";
-      document.getElementById("event-view").style.display = "block";
-      document.getElementById("event-count").textContent = events.length;
-      renderCards(events, "event-grid");
+      if (key === "event") {
+        document.getElementById("event-view").style.display = "block";
+        document.getElementById("event-count").textContent = events.length;
+        renderCards(events, "event-grid", true);
+      } else if (key === "dev") {
+        document.getElementById("dev-view").style.display = "block";
+        document.getElementById("dev-count").textContent = devSites.length;
+        renderCards(devSites, "dev-grid", true);
+      }
     }
 
     function goBack() {
       document.getElementById("event-view").style.display = "none";
+      document.getElementById("dev-view").style.display = "none";
       document.getElementById("main-view").style.display = "block";
     }
 
     // 초기 렌더링
     document.getElementById("count").textContent = sites.length;
-    renderCards(sites, "grid");
+    renderCards(sites, "grid", true);
   </script>
 </body>
 </html>
