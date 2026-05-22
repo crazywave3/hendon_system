@@ -50,11 +50,6 @@
       letter-spacing: -0.02em;
     }
 
-    h1 span {
-      color: rgba(255,255,255,0.40);
-      font-weight: 300;
-    }
-
     .subtitle {
       margin-top: 10px;
       font-size: 14px;
@@ -184,6 +179,26 @@
       opacity: 1;
     }
 
+    .back-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: 'Noto Sans KR', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 24px;
+      transition: background 0.2s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
     @media (max-width: 600px) {
       .header-inner { padding: 32px 20px 24px; }
       main { padding: 28px 20px 60px; }
@@ -205,12 +220,23 @@
     </div>
   </header>
 
-  <main>
+  <!-- 메인 뷰 -->
+  <main id="main-view">
     <div class="section-header">
       <div class="section-label">사이트 바로가기</div>
       <span class="count-badge" id="count"></span>
     </div>
     <div class="grid" id="grid"></div>
+  </main>
+
+  <!-- 이벤트 뷰 -->
+  <main id="event-view" style="display:none;">
+    <button class="back-btn" onclick="goBack()">← 뒤로</button>
+    <div class="section-header">
+      <div class="section-label">이벤트</div>
+      <span class="count-badge" id="event-count"></span>
+    </div>
+    <div class="grid" id="event-grid"></div>
   </main>
 
   <script>
@@ -264,30 +290,67 @@
         description: "개발중",
         accent: "#636366",
       },
+      {
+        name: "이벤트",
+        url: null,
+        icon: "🎪",
+        description: "행사 및 전시 바로가기",
+        accent: "#9b59b6",
+        isFolder: true,
+      },
     ];
 
-    const grid = document.getElementById("grid");
-    const count = document.getElementById("count");
+    const events = [
+      {
+        name: "2026 서울국제식품산업대전",
+        url: "https://crazywave3.github.io/Seoulfood2026/",
+        icon: "🍽️",
+        description: "서울 식품 산업 전시회",
+        accent: "#9b59b6",
+      },
+    ];
 
-    count.textContent = sites.length;
+    function renderCards(data, containerId) {
+      const grid = document.getElementById(containerId);
+      grid.innerHTML = "";
+      data.forEach(site => {
+        const el = document.createElement(site.isFolder ? "div" : "a");
+        if (!site.isFolder) {
+          el.href = site.url;
+          el.target = "_blank";
+          el.rel = "noopener noreferrer";
+        } else {
+          el.onclick = () => openFolder();
+        }
+        el.className = "card";
+        el.innerHTML = `
+          <div class="card-accent" style="background:${site.accent}"></div>
+          <div class="card-body">
+            <div class="card-icon">${site.icon}</div>
+            <div class="card-name">${site.name}</div>
+            <div class="card-desc">${site.description}</div>
+          </div>
+          <div class="card-arrow">${site.isFolder ? "›" : "↗"}</div>
+        `;
+        grid.appendChild(el);
+      });
+    }
 
-    sites.forEach(site => {
-      const a = document.createElement("a");
-      a.href = site.url;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-      a.className = "card";
-      a.innerHTML = `
-        <div class="card-accent" style="background:${site.accent}"></div>
-        <div class="card-body">
-          <div class="card-icon">${site.icon}</div>
-          <div class="card-name">${site.name}</div>
-          <div class="card-desc">${site.description}</div>
-        </div>
-        <div class="card-arrow">↗</div>
-      `;
-      grid.appendChild(a);
-    });
+    function openFolder() {
+      document.getElementById("main-view").style.display = "none";
+      document.getElementById("event-view").style.display = "block";
+      document.getElementById("event-count").textContent = events.length;
+      renderCards(events, "event-grid");
+    }
+
+    function goBack() {
+      document.getElementById("event-view").style.display = "none";
+      document.getElementById("main-view").style.display = "block";
+    }
+
+    // 초기 렌더링
+    document.getElementById("count").textContent = sites.length;
+    renderCards(sites, "grid");
   </script>
 </body>
 </html>
